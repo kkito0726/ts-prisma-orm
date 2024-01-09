@@ -1,27 +1,69 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
-import { main } from "../server";
 import { User } from "../types/types";
 
 const prisma = new PrismaClient();
 
+// ユーザーを全員取得
 export const getUsers = async (req: express.Request, res: express.Response) => {
-  main();
   const users = await prisma.user.findMany();
-  res.send(JSON.stringify(users));
+  res.json(users);
 };
 
+// ユーザー取得
+export const getUser = async (req: express.Request, res: express.Response) => {
+  const { id } = req.body;
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+  res.json(user);
+};
+
+// ユーザー登録
 export const createUser = async (
   req: express.Request,
   res: express.Response
 ) => {
   const reqUser: User = req.body;
 
-  main();
   const user: User = await prisma.user.create({
     data: {
       name: reqUser.name,
     },
   });
-  res.send(JSON.stringify(user));
+  res.json(user);
+};
+
+// ユーザー更新
+export const updateUser = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const newUser: User = req.body;
+  const updatedUser: User = await prisma.user.update({
+    where: {
+      id: newUser.id,
+    },
+    data: {
+      name: newUser.name,
+    },
+  });
+  res.json(updatedUser);
+};
+
+// ユーザー削除
+export const deleteUser = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const { id } = req.body;
+  const deletedUser = await prisma.user.delete({
+    where: {
+      id,
+    },
+  });
+  res.json(deletedUser);
 };

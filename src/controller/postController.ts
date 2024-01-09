@@ -1,9 +1,25 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
-import { main } from "../server";
 import { Post } from "../types/types";
 
 const prisma = new PrismaClient();
+
+// 全ポスト取得
+export const getPosts = async (req: express.Request, res: express.Response) => {
+  const posts: Post[] = await prisma.post.findMany();
+  res.json(posts);
+};
+
+// ポスト取得
+export const getPost = async (req: express.Request, res: express.Response) => {
+  const { id } = req.body;
+  const post = await prisma.post.findUnique({
+    where: {
+      id,
+    },
+  });
+  res.json(post);
+};
 
 // ポスト投稿
 export const createPost = async (
@@ -12,7 +28,6 @@ export const createPost = async (
 ) => {
   const reqPost: Post = req.body;
 
-  main();
   const post = await prisma.post.create({
     data: {
       title: reqPost.title,
@@ -21,28 +36,34 @@ export const createPost = async (
     },
   });
 
-  res.send(JSON.stringify(post));
-};
-
-// 全ポスト取得
-export const getPosts = async (req: express.Request, res: express.Response) => {
-  main();
-  const posts: Post[] = await prisma.post.findMany();
-  res.send(JSON.stringify(posts));
+  res.json(post);
 };
 
 // ポスト修正
 export const putPost = async (req: express.Request, res: express.Response) => {
-  main();
-  const reqPost: Post = req.body;
+  const newPost: Post = req.body;
   const post = await prisma.post.update({
     where: {
-      id: reqPost.id,
+      id: newPost.id,
     },
     data: {
-      title: reqPost.title,
-      message: reqPost.message,
+      title: newPost.title,
+      message: newPost.message,
     },
   });
-  res.send(JSON.stringify(post));
+  res.json(post);
+};
+
+// ポスト削除
+export const deletePost = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const { id } = req.body;
+  const deletedPost = await prisma.post.delete({
+    where: {
+      id,
+    },
+  });
+  res.json(deletedPost);
 };

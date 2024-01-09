@@ -40,13 +40,15 @@ app.get("/", (req, res) => {
         message: "Hello ts-express server!!",
     }));
 });
-// ユーザーを全員取得
+// ユーザー
 app.get("/users", userController_1.getUsers);
-// ユーザー登録
+app.get("/user", userController_1.getUser);
 app.post("/user", userController_1.createUser);
-// ポスト投稿
-app.post("/post", postController_1.createPost);
-// 全ポスト取得
+app.put("/user", userController_1.updateUser);
+app.delete("/user", userController_1.deleteUser);
+// ポスト
 app.get("/posts", postController_1.getPosts);
-// ポスト修正
+app.get("/post", postController_1.getPost);
+app.post("/post", postController_1.createPost);
 app.put("/post", postController_1.putPost);
+app.delete("/post", postController_1.deletePost);

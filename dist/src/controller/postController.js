@@ -9,14 +9,29 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.putPost = exports.getPosts = exports.createPost = void 0;
+exports.deletePost = exports.putPost = exports.createPost = exports.getPost = exports.getPosts = void 0;
 const client_1 = require("@prisma/client");
-const server_1 = require("../server");
 const prisma = new client_1.PrismaClient();
+// 全ポスト取得
+const getPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const posts = yield prisma.post.findMany();
+    res.json(posts);
+});
+exports.getPosts = getPosts;
+// ポスト取得
+const getPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.body;
+    const post = yield prisma.post.findUnique({
+        where: {
+            id,
+        },
+    });
+    res.json(post);
+});
+exports.getPost = getPost;
 // ポスト投稿
 const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const reqPost = req.body;
-    (0, server_1.main)();
     const post = yield prisma.post.create({
         data: {
             title: reqPost.title,
@@ -24,29 +39,32 @@ const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             authorId: reqPost.authorId,
         },
     });
-    res.send(JSON.stringify(post));
+    res.json(post);
 });
 exports.createPost = createPost;
-// 全ポスト取得
-const getPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, server_1.main)();
-    const posts = yield prisma.post.findMany();
-    res.send(JSON.stringify(posts));
-});
-exports.getPosts = getPosts;
 // ポスト修正
 const putPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, server_1.main)();
-    const reqPost = req.body;
+    const newPost = req.body;
     const post = yield prisma.post.update({
         where: {
-            id: reqPost.id,
+            id: newPost.id,
         },
         data: {
-            title: reqPost.title,
-            message: reqPost.message,
+            title: newPost.title,
+            message: newPost.message,
         },
     });
-    res.send(JSON.stringify(post));
+    res.json(post);
 });
 exports.putPost = putPost;
+// ポスト削除
+const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.body;
+    const deletedPost = yield prisma.post.delete({
+        where: {
+            id,
+        },
+    });
+    res.json(deletedPost);
+});
+exports.deletePost = deletePost;

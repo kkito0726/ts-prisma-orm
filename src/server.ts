@@ -1,7 +1,19 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
-import { createUser, getUsers } from "./controller/userController";
-import { createPost, getPosts, putPost } from "./controller/postController";
+import {
+  createUser,
+  deleteUser,
+  getUser,
+  getUsers,
+  updateUser,
+} from "./controller/userController";
+import {
+  createPost,
+  deletePost,
+  getPost,
+  getPosts,
+  putPost,
+} from "./controller/postController";
 
 const prisma = new PrismaClient();
 const app: express.Express = express();
@@ -30,17 +42,16 @@ app.get("/", (req: express.Request, res: express.Response) => {
   );
 });
 
-// ユーザーを全員取得
+// ユーザー
 app.get("/users", getUsers);
-
-// ユーザー登録
+app.get("/user", getUser);
 app.post("/user", createUser);
+app.put("/user", updateUser);
+app.delete("/user", deleteUser);
 
-// ポスト投稿
-app.post("/post", createPost);
-
-// 全ポスト取得
+// ポスト
 app.get("/posts", getPosts);
-
-// ポスト修正
+app.get("/post", getPost);
+app.post("/post", createPost);
 app.put("/post", putPost);
+app.delete("/post", deletePost);

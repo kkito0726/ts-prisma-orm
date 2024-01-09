@@ -9,24 +9,59 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createUser = exports.getUsers = void 0;
+exports.deleteUser = exports.updateUser = exports.createUser = exports.getUser = exports.getUsers = void 0;
 const client_1 = require("@prisma/client");
-const server_1 = require("../server");
 const prisma = new client_1.PrismaClient();
+// ユーザーを全員取得
 const getUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, server_1.main)();
     const users = yield prisma.user.findMany();
-    res.send(JSON.stringify(users));
+    res.json(users);
 });
 exports.getUsers = getUsers;
+// ユーザー取得
+const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.body;
+    const user = yield prisma.user.findUnique({
+        where: {
+            id,
+        },
+    });
+    res.json(user);
+});
+exports.getUser = getUser;
+// ユーザー登録
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const reqUser = req.body;
-    (0, server_1.main)();
     const user = yield prisma.user.create({
         data: {
             name: reqUser.name,
         },
     });
-    res.send(JSON.stringify(user));
+    res.json(user);
 });
 exports.createUser = createUser;
+// ユーザー更新
+const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const newUser = req.body;
+    const updatedUser = yield prisma.user.update({
+        where: {
+            id: newUser.id,
+        },
+        data: {
+            name: newUser.name,
+        },
+    });
+    res.json(updatedUser);
+});
+exports.updateUser = updateUser;
+// ユーザー削除
+const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.body;
+    const deletedUser = yield prisma.user.delete({
+        where: {
+            id,
+        },
+    });
+    res.json(deletedUser);
+});
+exports.deleteUser = deleteUser;
